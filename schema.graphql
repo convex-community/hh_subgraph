@@ -1,6 +1,41 @@
-type ExampleEntity @entity {
+type Platform @entity {
   id: ID!
-  count: BigInt!
-  bribeIdentifier: Bytes! # bytes32
-  rewardIdentifier: Bytes! # bytes32
+  fee: BigInt!
+}
+
+type Proposal @entity {
+  id: ID!
+  deadline: BigInt!
+  voteId: BigInt
+  gauge: Gauge
+  bribes: [Bribe!]! @derivedFrom(field: "proposal")
+  depositor: Depositor!
+}
+
+type Gauge @entity {
+  id: ID!
+  name: String!
+  proposals: [Proposal!]! @derivedFrom(field: "gauge")
+}
+
+type Depositor @entity {
+  id: ID!
+  handle: String!
+  bribes: [Bribe!]! @derivedFrom(field: "depositor")
+  proposals: [Proposal!]! @derivedFrom(field: "depositor")
+}
+
+
+type Bribe @entity {
+  id: ID!
+  platformId: Bytes!
+  bribeIdentifier: Bytes!
+  rewardIdentifier: Bytes!
+  depositor: Depositor!
+  platform: String!
+  briber: Bytes!
+  token: Bytes!
+  amount: BigInt!
+  proposal: Proposal!
+  timestamp: BigInt!
 }

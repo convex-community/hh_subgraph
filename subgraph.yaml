@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,46 +8,55 @@ dataSources:
     source:
       address: "0x9DDb2da7Dd76612e0df237B89AF2CF4413733212"
       abi: BribeVault
+      startBlock: 14545237
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - DepositBribe
-        - EmergencyWithdrawal
-        - GrantDepositorRole
-        - RevokeDepositorRole
-        - RoleAdminChanged
-        - RoleGranted
-        - RoleRevoked
-        - SetDistributor
-        - SetFee
-        - SetFeeRecipient
-        - TransferBribe
+        - Platform
+        - Bribe
+        - Proposal
       abis:
         - name: BribeVault
           file: ./abis/BribeVault.json
       eventHandlers:
         - event: DepositBribe(indexed bytes32,indexed bytes32,indexed address,uint256,uint256,address)
           handler: handleDepositBribe
-        - event: EmergencyWithdrawal(indexed address,uint256,address)
-          handler: handleEmergencyWithdrawal
         - event: GrantDepositorRole(address)
           handler: handleGrantDepositorRole
-        - event: RevokeDepositorRole(address)
-          handler: handleRevokeDepositorRole
-        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
-          handler: handleRoleAdminChanged
-        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
-          handler: handleRoleGranted
-        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
-          handler: handleRoleRevoked
-        - event: SetDistributor(address)
-          handler: handleSetDistributor
         - event: SetFee(uint256)
           handler: handleSetFee
-        - event: SetFeeRecipient(address)
-          handler: handleSetFeeRecipient
-        - event: TransferBribe(indexed bytes32,indexed address,uint256,uint256)
-          handler: handleTransferBribe
+      file: ./src/mapping.ts
+
+templates:
+  - name: BribeVaultTemplate
+    kind: ethereum/contract
+    network: mainnet
+    source:
+      abi: BribeVaultTemplate
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Platform
+        - Bribe
+        - Proposal
+        - Gauge
+        - Depositor
+      abis:
+        - name: BribeVault
+          file: ./abis/BribeVault.json
+        - name: BribeVaultTemplate
+          file: ./abis/BribeVaultTemplate.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      callHandlers:
+        - function: setDaoProposal(uint256,uint256)
+          handler: handleSetDaoProposal
+        - function: setGaugeProposal(address,uint256)
+          handler: handleSetGaugeProposal
+        - function: setGaugeProposals(address[],uint256[])
+          handler: handleSetGaugeProposals
       file: ./src/mapping.ts
