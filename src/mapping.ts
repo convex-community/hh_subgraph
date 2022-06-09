@@ -1,21 +1,16 @@
-import {Address, crypto, ethereum, BigInt, Bytes, ByteArray} from "@graphprotocol/graph-ts"
-import {
-  BribeVault,
-  DepositBribe,
-  GrantDepositorRole,
-  SetFee,
-} from "../generated/BribeVault/BribeVault"
+import { crypto } from '@graphprotocol/graph-ts'
+import { DepositBribe, GrantDepositorRole, SetFee } from '../generated/BribeVault/BribeVault'
 import {
   SetDaoProposalCall,
-  SetGaugeProposalCall, SetGaugeProposalsCall
-} from "../generated/templates/BribeVaultTemplate/BribeVaultTemplate"
-import {getDepositor, getGauge, getPlatform} from "./entities";
-import {BribeVaultTemplate} from "../generated/templates";
-import {concat, uint256ToByteArray} from "./utils";
-import {Proposal} from "../generated/schema";
+  SetGaugeProposalCall,
+  SetGaugeProposalsCall,
+} from '../generated/templates/BribeVaultTemplate/BribeVaultTemplate'
+import { getDepositor, getGauge, getPlatform } from './entities'
+import { BribeVaultTemplate } from '../generated/templates'
+import { concat, uint256ToByteArray } from './utils'
+import { Proposal } from '../generated/schema'
 
-export function handleDepositBribe(event: DepositBribe): void {
-}
+export function handleDepositBribe(event: DepositBribe): void {}
 
 export function handleGrantDepositorRole(event: GrantDepositorRole): void {
   BribeVaultTemplate.create(event.params.depositor)
@@ -26,11 +21,6 @@ export function handleSetFee(event: SetFee): void {
   const platform = getPlatform()
   platform.fee = event.params._fee
   platform.save()
-}
-
-function getGaugeProposalHash(gauge: Address, deadline: BigInt): ByteArray {
-  const gaugeHash = crypto.keccak256(gauge)
-  return crypto.keccak256(concat(gaugeHash, uint256ToByteArray(deadline)))
 }
 
 export function handleSetGaugeProposal(call: SetGaugeProposalCall): void {
